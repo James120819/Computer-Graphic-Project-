@@ -338,14 +338,11 @@ void SceneManager::SetTextureUVScale(float u, float v)
 void SceneManager::SetShaderMaterial(
 	std::string materialTag)
 {
-	if (m_objectMaterials.size() > 0)
-	{
-		OBJECT_MATERIAL material;
-		bool bReturn = false;
+	OBJECT_MATERIAL material{};
 
-		bReturn = FindMaterial(materialTag, material);
-		if (bReturn == true)
-		{
+	if (!FindMaterial(materialTag, material)) {
+		return;
+	}
 			m_pShaderManager->setVec3Value("material.diffuseColor", material.diffuseColor);
 			m_pShaderManager->setVec3Value("material.specularColor", material.specularColor);
 			m_pShaderManager->setFloatValue("material.shininess", material.shininess);
@@ -1025,5 +1022,6 @@ void SceneManager::RenderScene()
 	m_basicMeshes->DrawPlaneMesh();
 	/****************************************************************/
 }
+
 
 
