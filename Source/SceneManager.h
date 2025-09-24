@@ -97,6 +97,14 @@ private:
 	void SetShaderMaterial(
 		std::string materialTag);
 
+    void ApplyAndDraw(const std::string& texTag,
+                      const std::string& matTag,
+                      const glm::vec2& uv, 
+                      const glm::vec3& scale,
+                      float rx, float ry, float rz,
+                      const glm::vec3& pos,
+                      const std::function<void()>& drawCall);
+
 public:
 
 	// The following methods are for the students to 
@@ -106,4 +114,5 @@ public:
 	void LoadSceneTextures();
 	void SetupSceneLights();
 	void DefineObjectMaterials();
+
 };
