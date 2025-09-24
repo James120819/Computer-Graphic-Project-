@@ -561,6 +561,21 @@ void SceneManager::PrepareScene()
 	
 }
 
+void SceneManager::ApplyAndDraw(const std::string& texTag,
+                                const std::string& matTag,
+                                const glm::vec2& uv,
+                                const glm::vec3& scale,
+                                float rx, float ry, float rz,
+                                const glm::vec3& pos,
+                                const std::function<void()>& drawCall)
+{
+
+   SetShaderTexture(texTag);
+   SetShaderMaterial(matTag);
+   SetTextureUVScale(uv.x, uv.y);
+   SetTransformations(scale, rx, ry, rz, pos);
+   drawCall();
+}
 /***********************************************************
  *  RenderScene()
  *
@@ -1022,6 +1037,7 @@ void SceneManager::RenderScene()
 	m_basicMeshes->DrawPlaneMesh();
 	/****************************************************************/
 }
+
 
 
 
