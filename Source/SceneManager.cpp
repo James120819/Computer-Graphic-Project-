@@ -213,29 +213,19 @@ int SceneManager::FindTextureSlot(std::string tag)
  ***********************************************************/
 bool SceneManager::FindMaterial(std::string tag, OBJECT_MATERIAL& material)
 {
-	if (m_objectMaterials.size() == 0)
-	{
-		return(false);
-	}
-
-	int index = 0;
+	if (m_objectMaterials.empty()) return false;
 	bool bFound = false;
-	while ((index < m_objectMaterials.size()) && (bFound == false))
-	{
-		if (m_objectMaterials[index].tag.compare(tag) == 0)
+	for (const auto& m : m_objectMaterials)
 		{
-			bFound = true;
-			material.diffuseColor = m_objectMaterials[index].diffuseColor;
-			material.specularColor = m_objectMaterials[index].specularColor;
-			material.shininess = m_objectMaterials[index].shininess;
+			if (m.tag == tag)
+			{
+				material = m;
+				bFound = true;
+				break;
+			}
 		}
-		else
-		{
-			index++;
-		}
-	}
+	return bFound;
 
-	return(true);
 }
 
 /***********************************************************
@@ -1032,3 +1022,4 @@ void SceneManager::RenderScene()
 	m_basicMeshes->DrawPlaneMesh();
 	/****************************************************************/
 }
+
