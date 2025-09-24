@@ -304,10 +304,13 @@ void SceneManager::SetShaderTexture(
 {
 	if (NULL != m_pShaderManager)
 	{
-		m_pShaderManager->setIntValue(g_UseTextureName, true);
+		int textureID = FindTextureSlot(textureTag);
 
-		int textureID = -1;
-		textureID = FindTextureSlot(textureTag);
+		if (textureID < 0) {
+			return;
+		}
+
+		m_pShaderManager->setIntValue(g_UseTextureName, true);
 		m_pShaderManager->setSampler2DValue(g_TextureValueName, textureID);
 	}
 }
@@ -1022,4 +1025,5 @@ void SceneManager::RenderScene()
 	m_basicMeshes->DrawPlaneMesh();
 	/****************************************************************/
 }
+
 
