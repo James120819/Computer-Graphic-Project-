@@ -38,10 +38,21 @@ private:
 	// process keyboard events for interaction with the 3D scene
 	void ProcessKeyboardEvents();
 
+int m_selectedPointLight = 0;
+
+float m_moveSpeedScale = 1.0f;
+
+bool KeyPressedOnce(int key);
+void SetWindowTitleWithSelection();
+
 public:
 	// create the initial OpenGL display window
 	GLFWwindow* CreateDisplayWindow(const char* windowTitle);
 	
 	// prepare the conversion from 3D object display to 2D scene display
 	void PrepareSceneView();
+
+    void HandleInteractiveShortcuts(GLFWwindow* window);
+    void UploadInteractiveUniforms();
+
 };
