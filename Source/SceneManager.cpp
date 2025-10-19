@@ -1038,6 +1038,41 @@ void SceneManager::RenderScene()
 	/****************************************************************/
 }
 
+void SceneManager::UploadInteractiveUniforms() {                                               
 
+	GLint program = 0;                                                                          
+    glGetIntegerv(GL_CURRENT_PROGRAM, &program);                                                
+    if (program == 0) return;                                                                   
 
+    auto UL = [&](const char* name)->GLint { return glGetUniformLocation(program, name); };     
+    auto SetBool   = [&](const char* n, bool v){ GLint loc=UL(n); if(loc>=0) glUniform1i(loc, v?1:0); };   
+    auto SetFloat  = [&](const char* n, float v){ GLint loc=UL(n); if(loc>=0) glUniform1f(loc, v); };      
+    auto SetVec3   = [&](const char* n, const glm::vec3& v){ GLint loc=UL(n); if(loc>=0) glUniform3fv(loc,1,&v[0]); }; 
 
+    SetBool ("dirLight.bActive",   m_dirLightOn);                                               
+    
+    SetFloat("dirLight.intensity", m_dirIntensity);                                             
+    
+    SetVec3 ("dirLight.direction", glm::normalize(m_dirLightDir));                               
+
+    
+    const int kNumPoint = 4;                                                                     
+    for (int i = 0; i < kNumPoint; ++i) {                                                        
+        std::string base = "pointLights[" + std::to_string(i) + "]";                             
+        
+        SetBool ((base + ".bActive").c_str(),   m_pointLightOn[i]);                             
+        
+        SetFloat((base + ".intensity").c_str(), m_pointIntensity[i]);                            
+       
+        SetVec3 ((base + ".position").c_str(),  m_pointLightPos[i]);                             
+    }                                                                                            
+
+    
+    
+    SetBool ("spotLight.bActive",   m_flashlightOn);                                            
+    SetFloat("spotLight.intensity", m_spotIntensity);                                            
+    SetBool ("flashlight",          m_flashlightOn);                                             
+
+   
+    SetFloat("uAmbientBoost", m_ambientBoost);                                                   
+}
