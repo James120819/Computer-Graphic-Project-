@@ -12,7 +12,9 @@
 // GLM Math Header inclusions
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>    
+#include <glm/gtc/type_ptr.hpp>
+#include <sstream>
+#include <algorithm>
 
 // declaration of the global variables and defines
 namespace
@@ -107,6 +109,9 @@ GLFWwindow* ViewManager::CreateDisplayWindow(const char* windowTitle)
 
 	// tell GLFW to capture all mouse events
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// Enabling sticky keys 
+	glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
 
 	// this callback is used to receive mouse moving events
 	glfwSetCursorPosCallback(window, &ViewManager::Mouse_Position_Callback);
@@ -221,6 +226,29 @@ void ViewManager::ProcessKeyboardEvents()
 		
 	}
 
+
+
+////////////////////////////////////////////////////
+bool ViewManager::KeyPressedOnce(int key) {
+    int state = glfwGetKey(m_window, key);
+    if (state == GLFW_PRESS && !m_keyOnce[key]) {
+        m_keyOnce[key] = true;
+        return true;
+    }
+    if (state == GLFW_RELEASE) {
+        m_keyOnce[key] = false;
+    }
+    return false;
+}
+
+// Updates the window title to show the selected light and move speed scale
+void ViewManager::SetWindowTitleWithSelection() {
+    std::ostringstream oss;
+    oss << "Graphics Project  |  Selected Light: "
+        << (m_selectedPointLight + 1)
+        << "  |  Move speed x" << m_moveSpeedScale;
+    glfwSetWindowTitle(m_window, oss.str().c_str());
+}
 /***********************************************************
  *  PrepareSceneView()
  *
@@ -270,4 +298,34 @@ void ViewManager::PrepareSceneView()
 		// set the view position of the camera into the shader for proper rendering
 		m_pShaderManager->setVec3Value("viewPosition", g_pCamera->Position);
 	}
+
 }
+
+void ViewManager::HandleInteractiveShortcuts(GLFWwindow* window) {                          
+    //                                                  
+    float dt = 0.016f;                                                                       
+    float base = 3.0f;                                                                       
+    float speed = base * m_moveSpeedScale * dt;                                              
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) speed *= 2.0f;                
+
+    //Camera                                                            
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) m_camera.MoveForward(speed);           
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) m_camera.MoveBackward(speed);          
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) m_camera.MoveLeft(speed);              
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) m_camera.MoveRight(speed);             
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) m_camera.MoveDown(speed);              
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) m_camera.MoveUp(speed);               
+
+    //Speed scale                                              
+    if (KeyPressedOnce(GLFW_KEY_Z)) {                                                       
+        m_moveSpeedScale = std::max(0.25f, m_moveSpeedScale * 0.5f);                         
+        SetWindowTitleWithSelection();                                                       
+    }                                                                                        
+    if (KeyPressedOnce(GLFW_KEY_X)) {                                                       
+        m_moveSpeedScale = std::min(8.0f,  m_moveSpeedScale * 2.0f);                         
+        SetWindowTitleWithSelection();                                                      
+    }                                                                                        
+
+                                      
+    if (KeyPressedOnce(GLFW_KEY_1)) { m_selectedPointLight = 0; SetWindowTitleWithSelection(); } 
+    if (KeyPressedOnce(GLFW_KEY_2)) { m_selectedPointLight = 1; SetWindowTitleWithSelection(); } 
