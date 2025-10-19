@@ -329,3 +329,29 @@ void ViewManager::HandleInteractiveShortcuts(GLFWwindow* window) {
                                       
     if (KeyPressedOnce(GLFW_KEY_1)) { m_selectedPointLight = 0; SetWindowTitleWithSelection(); } 
     if (KeyPressedOnce(GLFW_KEY_2)) { m_selectedPointLight = 1; SetWindowTitleWithSelection(); } 
+ if (KeyPressedOnce(GLFW_KEY_3)) { m_selectedPointLight = 2; SetWindowTitleWithSelection(); } 
+    if (KeyPressedOnce(GLFW_KEY_4)) { m_selectedPointLight = 3; SetWindowTitleWithSelection(); } 
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT)  == GLFW_PRESS)  m_pointLightPos[m_selectedPointLight].x -= speed; 
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)  m_pointLightPos[m_selectedPointLight].x += speed; 
+    if (glfwGetKey(window, GLFW_KEY_UP)    == GLFW_PRESS)  m_pointLightPos[m_selectedPointLight].z -= speed; 
+    if (glfwGetKey(window, GLFW_KEY_DOWN)  == GLFW_PRESS)  m_pointLightPos[m_selectedPointLight].z += speed; 
+    if (glfwGetKey(window, GLFW_KEY_PAGE_UP)   == GLFW_PRESS) m_pointLightPos[m_selectedPointLight].y += speed; 
+    if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS) m_pointLightPos[m_selectedPointLight].y -= speed; 
+
+    if (KeyPressedOnce(GLFW_KEY_L)) { m_dirLightOn     = !m_dirLightOn; }                    
+    if (KeyPressedOnce(GLFW_KEY_F)) { m_flashlightOn   = !m_flashlightOn; }                  
+    if (KeyPressedOnce(GLFW_KEY_T)) { m_pointLightOn[m_selectedPointLight] = !m_pointLightOn[m_selectedPointLight]; } 
+
+if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS || KeyPressedOnce(GLFW_KEY_EQUAL)) {          
+        m_pointIntensity[m_selectedPointLight] = std::min(3.0f, m_pointIntensity[m_selectedPointLight] + 0.05f); 
+    }                                                                                                     
+    if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS || KeyPressedOnce(GLFW_KEY_MINUS)) {       
+        m_pointIntensity[m_selectedPointLight] = std::max(0.0f, m_pointIntensity[m_selectedPointLight] - 0.05f); 
+    }                                                                                                     
+
+    if (glfwGetKey(window, GLFW_KEY_SEMICOLON) == GLFW_PRESS)  m_ambientBoost = std::max(0.0f, m_ambientBoost - 0.001f); 
+    if (glfwGetKey(window, GLFW_KEY_APOSTROPHE) == GLFW_PRESS) m_ambientBoost = std::min(0.3f,  m_ambientBoost + 0.001f); 
+
+    UploadInteractiveUniforms();                                                            
+}                                                                                             
